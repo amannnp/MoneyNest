@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MoneyNest Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+   .main-navbar {
+  width: 100vw;
+  background: linear-gradient(90deg, #6a82fb, #43cea2);
+  color: #fff;
+  padding: 0.7rem 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(67, 206, 162, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.marquee {
+  width: 100vw;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.marquee span {
+  display: inline-block;
+  padding-left: 100vw;
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+body {
+  padding-top: 60px;
+}
+
+body {
+  padding-top: 68px;
+}
+    .main-footer {
+  width: 100vw;
+  background: #185a9d;
+  color: #fff;
+  padding: 0.8rem 0;
+  text-align: center;
+  font-size: 1rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  letter-spacing: 1px;
+}
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(-45deg, #6a82fb, #fc5c7d, #43cea2, #185a9d);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    #main-dashboard {
+      width: 950px;
+      max-width: 98vw;
+      min-height: 300px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .dashboard-nav {
+      display: flex;
+      gap: 1rem;
+      background: #f7faff;
+      padding: 1rem 2rem 0 2rem;
+      border-bottom: 1px solid #080202;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      padding: 0.5rem 1.2rem;
+      cursor: pointer;
+      color: #185a9d;
+      border-bottom: 2px solid transparent;
+      transition: border 0.2s, color 0.2s;
+    }
+    .tab-btn.active, .tab-btn:focus {
+      border-bottom: 2.5px solid #43cea2;
+      color: #43cea2;
+      outline: none;
+    }
+    .dashboard-content {
+      padding: 2rem;
+    }
+    .login-btn {
+      width: 200px;
+      padding: 0.85rem 0;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(90deg, #6a82fb, #43cea2);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 4px 24px 0 rgba(67, 206, 162, 0.2);
+      transition: background 0.4s, box-shadow 0.4s, transform 0.2s;
+      outline: none;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      display: block;
+    }
+    .login-btn:hover, .login-btn:focus {
+      background: linear-gradient(90deg, #43cea2, #6a82fb);
+      box-shadow: 0 8px 32px 0 rgba(67, 206, 162, 0.3);
+      transform: translateY(-2px) scale(1.03);
+    }
+    @media (max-width: 900px) {
+      #main-dashboard { flex-direction: column; width: 98vw; min-height: unset;}
+    }
+    @media (max-width: 600px) {
+      #main-dashboard { flex-direction: column; width: 100vw; border-radius: 0;}
+    }
+  </style>
+</head>
+<footer class="main-footer">
+  <span>By Aman Pandey | Year - 2025 | Contact - pandeyaman6400@gmail.com</span>
+</footer>
+
+<body>
+    <nav class="main-navbar">
+  <div class="marquee">
+    <span>MoneyNest – Your Financial Fitness Hub&nbsp;|&nbsp;Did you know that in India, your CIBIL score (ranging from 300 to 900) plays a major role in whether your loan is approved or not? &nbsp;|&nbsp; Healthy credit, happy wallet! </span>
+  </div>
+</nav>
+
+
+  <div id="main-dashboard">
+    <nav class="dashboard-nav">
+      <button class="tab-btn" id="tab-dashboard" onclick="showTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" id="tab-reports" onclick="showTab('reports')">Reports</button>
+      <button class="tab-btn" id="tab-logout" onclick="logout()">Logout</button>
+    </nav>
+    <div class="dashboard-content">
+      <div id="dashboard-tab-content">
+        <h2>Welcome, <span id="user-display"></span>!</h2>
+        <button id="take-quiz-btn" class="login-btn" style="margin-top:8rem;">Take Quiz</button>
+      </div>
+      <div id="reports-tab-content" style="display:none;">
+        <h2>Your Reports</h2>
+        <div id="reports-content" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+          <p>Reports and progress will appear here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+  import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+
+    authDomain: "moneynest-a90e0.firebaseapp.com",
+    projectId: "moneynest-a90e0",
+    storageBucket: "moneynest-a90e0.appspot.com",
+    messagingSenderId: "121577022331",
+    appId: "1:121577022331:web:ef735bc7b79f21e67a53de",
+    measurementId: "G-6LN6BCGMYT"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      document.getElementById("user-display").textContent = user.displayName || user.email;
+
+      // query run to gather record from firestore db
+      const q = query(collection(db, "loanApplications"), where("userId", "==", user.uid), orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      console.log("Fetched docs count:", querySnapshot.size);
+      const reportsContent = document.getElementById("reports-content");
+
+      if (querySnapshot.empty) {
+        reportsContent.innerHTML = "<p>No reports found.</p>";
+      } else {
+        reportsContent.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const reportBox = document.createElement("div");
+          reportBox.style.cssText = `
+            background: #f3faff;
+            border: 1px solid #43cea2;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+          `;
+          reportBox.innerHTML = `
+            <strong>Loan Type:</strong> ${data.loan_type}<br/>
+            <strong>Term:</strong> ${data.loan_term} months<br/>
+            <strong>Annual Income:</strong> ₹${data.annual_income}<br/>
+            <strong>Credit Score:</strong> ${data.credit_score}<br/>
+            <strong>Age:</strong> ${data.age}, ${data.gender}, ${data.marital_status}<br/>
+            <strong>Prediction:</strong> ${data.prediction === 1 ? "Eligible ✅" : "Not Eligible ❌"}<br/>
+            <small><strong>Submitted:</strong> ${new Date(data.timestamp.seconds * 1000).toLocaleString()}</small>
+          `;
+          reportsContent.appendChild(reportBox);
+        });
+      }
+
+    } else {
+      window.location.href = "index.html";
+    }
+  });
+
+  window.showTab = function(tab) {
+    document.getElementById("dashboard-tab-content").style.display = tab === 'dashboard' ? "block" : "none";
+    document.getElementById("reports-tab-content").style.display = tab === 'reports' ? "block" : "none";
+    document.getElementById("tab-dashboard").classList.toggle("active", tab === 'dashboard');
+    document.getElementById("tab-reports").classList.toggle("active", tab === 'reports');
+  };
+  showTab('dashboard');
+
+  window.logout = function() {
+    signOut(auth).then(() => {
+      window.location.href = "index.html";
+    });
+  };
+  document.getElementById("take-quiz-btn").addEventListener("click", function () {
+    window.location.href = "form.html";
+  });
+</script>
+</body>
+</html>

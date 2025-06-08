@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MoneyNest Loan Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(-45deg, #6a82fb, #fc5c7d, #43cea2, #185a9d);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    .main-navbar {
+      width: 100vw;
+      background: linear-gradient(90deg, #6a82fb, #43cea2);
+      color: #fff;
+      padding: 0.7rem 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px rgba(67, 206, 162, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .marquee {
+      width: 100vw;
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+    .marquee span {
+      display: inline-block;
+      padding-left: 100vw;
+      animation: marquee 30s linear infinite;
+    }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    .quiz-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.13);
+      width: 420px;
+      max-width: 96vw;
+      padding: 2.5rem 2rem 2rem 2rem;
+      margin-top: 90px;
+      animation: fadeIn 1s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .quiz-progress {
+      width: 100%;
+      margin-bottom: 1.2rem;
+      color: #1976d2;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .quiz-question {
+      font-size: 1.18rem;
+      color: #185a9d;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+    .quiz-field {
+      width: 100%;
+      margin-bottom: 1.7rem;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      animation: fadeIn 0.6s;
+    }
+    .quiz-field label {
+      font-size: 1rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .quiz-field input,
+    .quiz-field select {
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #bdbdbd;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+      background: #f7faff;
+    }
+    .quiz-field input:focus,
+    .quiz-field select:focus {
+      border: 1.5px solid #43cea2;
+    }
+    .quiz-btn-row {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      margin-top: 1.2rem;
+    }
+    .quiz-btn {
+      padding: 0.7rem 2.2rem;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #6a82fb, #43cea2);
+      color: #fff;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 24px 0 rgba(67, 206, 162, 0.18);
+      transition: background 0.4s, box-shadow 0.4s, transform 0.2s;
+      outline: none;
+      margin: 0 0.5rem;
+    }
+    .quiz-btn:disabled {
+      background: #bdbdbd;
+      cursor: not-allowed;
+    }
+    .quiz-btn:hover:not(:disabled), .quiz-btn:focus:not(:disabled) {
+      background: linear-gradient(90deg, #43cea2, #6a82fb);
+      box-shadow: 0 8px 32px 0 rgba(67, 206, 162, 0.25);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .quiz-result {
+      color: #185a9d;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      animation: fadeIn 1s;
+    }
+    .main-footer {
+      width: 100vw;
+      background: #185a9d;
+      color: #fff;
+      padding: 0.8rem 0;
+      text-align: center;
+      font-size: 1rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      letter-spacing: 1px;
+    }
+    @media (max-width: 600px) {
+      .quiz-card { padding: 1.2rem 0.5rem; width: 98vw; margin-top: 70px;}
+      .main-navbar, .marquee { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="main-navbar">
+    <div class="marquee">
+      <span>MoneyNest – Secure Your Future! &nbsp;|&nbsp; Did you know: Timely loan repayments boost your credit score? &nbsp;|&nbsp; By Aman Pandey</span>
+    </div>
+  </nav>
+
+  <div class="quiz-card" id="quizCard">
+    <div class="quiz-progress" id="quizProgress"></div>
+    <form id="loanQuizForm" autocomplete="off">
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="quiz-field" id="quizField"></div>
+      <div class="quiz-btn-row">
+        <button type="button" class="quiz-btn" id="prevBtn" onclick="prevQuestion()" disabled>Prev</button>
+        <button type="button" class="quiz-btn" id="nextBtn" onclick="nextQuestion()">Next</button>
+      </div>
+    </form>
+    <div class="quiz-result" id="quizResult" style="display:none;"></div>
+  </div>
+
+  <footer class="main-footer">
+    <span>By Aman Pandey | Year - 2025 | Contact - pandeyaman6400@gmail.com</span>
+  </footer>
+
+  <script>
+    // firebase config
+    const firebaseConfig = {
+
+      authDomain: "moneynest-a90e0.firebaseapp.com",
+      projectId: "moneynest-a90e0",
+      storageBucket: "moneynest-a90e0.firebasestorage.app",
+      messagingSenderId: "121577022331",
+      appId: "1:121577022331:web:ef735bc7b79f21e67a53de",
+      measurementId: "G-6LN6BCGMYT"
+    };
+
+    // initializing here
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // store the current user once auth state is known
+    let currentUser = null;
+    firebase.auth().onAuthStateChanged(user => {
+      currentUser = user;
+      if(user) {
+        console.log("User logged in:", user.uid);
+      } else {
+        console.log("No user logged in");
+      }
+    });
+
+    // quiz part - array of ques
+    const loanFormQuestions = [
+      {
+        label: "What is your age?",
+        name: "age",
+        type: "number",
+        placeholder: "Enter your age (18 - 65)"
+      },
+      {
+        label: "What is your credit score?",
+        name: "credit_score",
+        type: "number",
+        placeholder: "Credit score (300 - 900)"
+      },
+      {
+        label: "Select the type of loan you are applying for:",
+        name: "loan_type",
+        type: "select",
+        options: ["gold", "personal", "home", "education", "vehicle", "business"]
+      },
+      {
+        label: "Select your gender:",
+        name: "gender",
+        type: "select",
+        options: ["male", "female", "other"]
+      },
+      {
+        label: "What is your marital status?",
+        name: "marital_status",
+        type: "select",
+        options: ["single", "married", "divorced"]
+      },
+      {
+        label: "What is your annual income (in INR)?",
+        name: "annual_income",
+        type: "number",
+        placeholder: "Enter your annual income"
+      },
+      {
+        label: "What is your desired loan term (in months)?",
+        name: "loan_term",
+        type: "number",
+        placeholder: "Loan term in months (e.g., 60, 120)"
+      }
+    ];
+
+    let currentQuestion = 0;
+    const userResponses = {};
+
+    function renderQuestion() {
+      document.getElementById("quizProgress").textContent = 
+        `Question ${currentQuestion + 1} of ${loanFormQuestions.length}`;
+      const q = loanFormQuestions[currentQuestion];
+      document.getElementById("quizQuestion").textContent = q.label;
+      const fieldDiv = document.getElementById("quizField");
+      fieldDiv.innerHTML = "";
+      let input;
+      if (q.type === "select") {
+        input = document.createElement("select");
+        input.name = q.name;
+        input.required = true;
+        input.innerHTML = q.options.map(opt => 
+          `<option value="${opt}">${opt.charAt(0).toUpperCase() + opt.slice(1)}</option>`
+        ).join("");
+      } else {
+        input = document.createElement("input");
+        input.type = q.type;
+        input.name = q.name;
+        input.placeholder = q.placeholder || "";
+        input.required = true;
+        if (q.type === "number") input.min = 0;
+      }
+      if (userResponses[q.name]) input.value = userResponses[q.name];
+      fieldDiv.appendChild(input);
+
+      document.getElementById("prevBtn").disabled = currentQuestion === 0;
+      document.getElementById("nextBtn").textContent = 
+        currentQuestion === loanFormQuestions.length - 1 ? "Submit" : "Next";
+    }
+
+    function nextQuestion() {
+      const q = loanFormQuestions[currentQuestion];
+      const input = document.querySelector(`[name="${q.name}"]`);
+      if (!input.checkValidity()) {
+        input.reportValidity();
+        return;
+      }
+      userResponses[q.name] = input.value;
+      if (currentQuestion < loanFormQuestions.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      } else {
+        submitQuiz();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+      }
+    }
+
+    async function submitQuiz() {
+      if (!currentUser) {
+        alert("Please sign in first.");
+        // redirect or stop here
+        return;
+      }
+      const uid = currentUser.uid;
+
+      const payload = {
+        Age: Number(userResponses.age),
+        Credit_Score: Number(userResponses.credit_score),
+        Loan_Type: userResponses.loan_type,
+        Gender: userResponses.gender,
+        Marital_Status: userResponses.marital_status,
+        Annual_Income_INR: Number(userResponses.annual_income),
+        Loan_Term_Months: Number(userResponses.loan_term)
+      };
+
+      try {
+        // prediction api call
+        const response = await fetch("http://localhost:10000/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error || "Prediction API error");
+        }
+
+        const data = await response.json();
+
+        // save to db 
+        await db.collection("loanApplications").add({
+          ...userResponses,
+          prediction: data.prediction,
+          timestamp: new Date(),
+          userId: uid
+        });
+
+        // display result
+        document.getElementById("loanQuizForm").style.display = "none";
+        document.getElementById("quizProgress").style.display = "none";
+        document.getElementById("quizQuestion").style.display = "none";
+        document.getElementById("quizField").style.display = "none";
+        document.querySelector(".quiz-btn-row").style.display = "none";
+
+        const resultEl = document.getElementById("quizResult");
+        resultEl.style.display = "block";
+        resultEl.innerHTML = `
+          <div>${data.prediction === 1 ? "Congrats! Your loan is likely to be approved." : "Sorry, your loan application might be rejected."}</div>
+          <button id="homeBtn" style="margin-top:1.5rem; padding:0.5rem 1rem; font-size:1rem; cursor:pointer;">
+            Home
+          </button>
+        `;
+
+        document.getElementById("homeBtn").addEventListener("click", () => {
+          window.location.href = "main.html";
+        });
+      } catch (error) {
+        alert("Error: " + error.message);
+        console.error(error);
+      }
+    }
+    // initial render
+    renderQuestion();
+  </script>
+</body>
+</html>
